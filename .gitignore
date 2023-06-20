@@ -40,3 +40,4 @@ lecture-call
 lecture
 node-deploy-*.json
 package-lock.json
+config/
