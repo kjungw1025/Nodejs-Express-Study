@@ -15,4 +15,8 @@ db.Comment = Comment;
 User.initiate(sequelize);
 Comment.initiate(sequelize);
 
+// 아래 두 줄이 없어서 Field 'commenter' doesn't have a default value 오류 발생했었음
+User.associate(db);
+Comment.associate(db);
+
 module.exports = db;
