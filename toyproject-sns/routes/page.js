@@ -11,6 +11,7 @@ router.use((req, res, next) => {
     next();
 });
 
+// 라우터의 마지막 미들웨어들을 컨트롤러라고 부름 --> 따로 폴더(controllers)로 분리
 router.get('/profile', renderProfile);
 
 router.get('/join', renderJoin);
