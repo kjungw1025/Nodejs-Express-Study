@@ -3,6 +3,7 @@ const { renderProfile, renderJoin, renderMain } = require('../controllers/page')
 
 const router = express.Router();
 
+// 라우터에서 공통적으로 쓸 수 있는 변수들을 res.locals를 통해 선언
 router.use((req, res, next) => {
     res.locals.user = null;
     res.locals.followerCount = 0;
