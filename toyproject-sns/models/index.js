@@ -1,11 +1,11 @@
 const Sequelize = require('sequelize');
-const fs = require('fs');
+const fs = require('fs'); // 폴더, 파일을 읽을 수 있는 모듈
 const path = require('path');
 const env = process.env.NODE_ENV || 'development';
-const config = require('../config/config')[env];
+const config = require('../config/config')[env];  // 설정 불러옴
 
 const db = {};
-const sequelize = new Sequelize(
+const sequelize = new Sequelize(  // 불러온 설정을 sequelize와 연결
   config.database, config.username, config.password, config,
 );
 
