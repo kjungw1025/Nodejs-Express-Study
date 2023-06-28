@@ -10,6 +10,7 @@ const dotenv = require('dotenv');
 dotenv.config(); // process.env
 // process.env.COOKIE_SECRET 있음
 const pageRouter = require('./routes/page');
+const { sequelize } = require('./models');
 
 const app = express();
 app.set('port', process.env.PORT || 8001);
@@ -18,6 +19,14 @@ nunjucks.configure('views', {
     express: app,
     watch: true,
 });
+
+sequelize.sync({ force: false })    // 개발시 테이블 잘못 만들었다면 force: true로, 다시 만들어줌 (배포시에는 금지!)
+    .then(() => {
+        console.log('데이터베이스 연결 성공');
+    })
+    .catch((err) => {
+        console.error(err);
+    });
 
 app.use(morgan('dev')); // 개발할 때는 자세한 dev로, 배포시 combined으로 바꾸는 거 추천
 app.use(express.static(path.join(__dirname, 'public'))); // __dirname(app.js가 있는 폴더 toyproject-sns를 가리킴). 그 안의 public 폴더를 가져오라는 의미
