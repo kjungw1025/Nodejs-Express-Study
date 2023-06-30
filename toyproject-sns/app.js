@@ -5,14 +5,17 @@ const path = require('path');
 const session = require('express-session');
 const nunjucks = require('nunjucks');
 const dotenv = require('dotenv');
+const passport = require('passport');
 
 // process.env.COOKIE_SECRET 없음
 dotenv.config(); // process.env
 // process.env.COOKIE_SECRET 있음
 const pageRouter = require('./routes/page');
 const { sequelize } = require('./models');
+const passportConfig = require('./passport');
 
 const app = express();
+passportConfig(); // 패스포트 설정
 app.set('port', process.env.PORT || 8001);
 app.set('view engine', 'html');
 nunjucks.configure('views', {
@@ -42,6 +45,8 @@ app.use(session({
         secure: false, // HTTPS로 변경 시 true로 바꾸기
     },
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', pageRouter);
 
