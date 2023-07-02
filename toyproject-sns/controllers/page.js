@@ -1,3 +1,5 @@
+const { User, Post } = require('../models'); 
+
 exports.renderProfile = (req, res) => {
     res.render('profile', { title: '내 정보 - NodeBird'}); // res.locals로 선언한 변수들 + 두 번째 인수들도 Front로 넘어감
 };
@@ -7,12 +9,24 @@ exports.renderJoin = (req, res) => {
     res.render('Join', { title: '회원 가입 - NodeBird' });
 };
 
-exports.renderMain = (req, res, next) => {
-    const twits = [];
-    res.render('main', {
-        title: 'NodeBird',
-        twits: [], // main 화면에서 보여줄 twit들을 미리 배열로 만듦
-    });
+exports.renderMain = async (req, res, next) => {
+    try {
+        const posts = await Post.findAll({
+            include: {
+                model: User,
+                attributes: ['id', 'nick'],
+            },
+            order: [['createdAt', 'DESC']],
+        });
+        res.render('main', {
+            title: 'NodeBird',
+            twits: posts,
+        });
+    }
+    catch (error) {
+        console.error(error);
+        next(error);
+    }
 };
 
 /*
