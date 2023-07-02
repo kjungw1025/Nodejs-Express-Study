@@ -1,0 +1,35 @@
+const { Post, Hashtag } = require('../models');
+
+exports.afterUploadImage = (req, res) => {
+    console.log(req.files);
+    res.json({ url: `/img/${req.file.filename}`});  // url = main.html의 res.data.url
+};
+
+exports.uploadPost = async (req, res, next) => {
+    // req.body.content, req.body.url
+    try {
+        // 예시 : 노드는 재밌다. #nodejs #노드 짱짱
+        const post = await Post.create({
+            content: req.body.content,
+            img: req.body.url,
+            UserId: req.user.id,
+        });
+        const hashtags = req.body.content.match(/#[^\s#]*/g);   // 정규 표현식을 통해 해시 태그 찾기
+        if (hashtags) {
+            const result = await Promise.all(
+                hashtags.map(tag => {
+                    return Hashtag.findOrCreate({
+                        where: { title: tag.slice(1).toLowerCase() },
+                    })
+                }),
+            );
+            console.log('result', result);
+            await post.addHashtags(result.map(r => r[0]));
+        }
+        res.redirect('/');
+    }
+    catch (error) {
+        console.error(error);
+        next(error);
+    }
+};
