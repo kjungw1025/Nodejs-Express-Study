@@ -39,6 +39,7 @@ exports.login = (req, res, next) => {
             return res.redirect('/');
         });
     })(req, res, next); // 미들웨어 내의 미들웨어에는 (req, res, next)를 붙임
+    // 미들웨어 내에서 (req, res, next)를 쓰기 위해 미들웨어 확장패턴을 사용한 것임
 };
 
 exports.logout = (req, res) => {

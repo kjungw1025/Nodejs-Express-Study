@@ -16,9 +16,10 @@ router.post('/login', isNotLoggedIn, login);
 router.get('/logout', isLoggedIn, logout);
 
 // GET /auth/kakao
-router.get('/kakao', passport.authenticate('kakao'));
+router.get('/kakao', passport.authenticate('kakao')); // 카카오톡 로그인 화면으로 redirect
 
 // GET /auth/kakao/callback
+// /auth/kakao -> 카카오톡 로그인 화면 -> 로그인 -> /auth/kakao/callback
 router.get('/kakao/callback', passport.authenticate('kakao', {
     failureRedirect: '/?error=카카오로그인 실패',
 }), (req, res) => {
