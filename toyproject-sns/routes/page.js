@@ -5,8 +5,10 @@ const { renderProfile, renderJoin, renderMain } = require('../controllers/page')
 const router = express.Router();
 
 // 라우터에서 공통적으로 쓸 수 있는 변수들을 res.locals를 통해 선언
+// res.locals는 미들웨어간의 공유되는 데이터
+// req.session은 사용자간의 공유되는 데이터 (같은 사용자라면 로그아웃하기 전까지는 req.session에 데이터가 공유됨)
 router.use((req, res, next) => {
-    res.locals.user = req.user;
+    res.locals.user = req.user; // 로그인했으면 req.user가 들어있음. 로그인 안했으면 null
     res.locals.followerCount = 0;
     res.locals.followingCount = 0;
     res.locals.followingIdList = [];

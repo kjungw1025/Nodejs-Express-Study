@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 
 module.exports = () => {
-    passport.user(new LocalStrategy({
+    passport.use(new LocalStrategy({
         usernameField: 'email', // req.body.email
         passwordField: 'password',  // req.body.password
         passReqToCallback: false,
@@ -16,7 +16,7 @@ module.exports = () => {
             if (exUser) {
                 const result = await bcrypt.compare(password, exUser.password);
                 if (result) {
-                    done (null, exUser);
+                    done (null, exUser);    // done이 호출되는 순간, controllers/auth.js의 (authError, user, info)로
                 }
                 else {
                     done (null, false, { message: '비밀번호가 일치하지 않습니다.' });

@@ -11,6 +11,7 @@ const passport = require('passport');
 dotenv.config(); // process.env
 // process.env.COOKIE_SECRET 있음
 const pageRouter = require('./routes/page');
+const authRouter = require('./routes/auth');
 const { sequelize } = require('./models');
 const passportConfig = require('./passport');
 
@@ -33,8 +34,8 @@ sequelize.sync({ force: false })    // 개발시 테이블 잘못 만들었다�
 
 app.use(morgan('dev')); // 개발할 때는 자세한 dev로, 배포시 combined으로 바꾸는 거 추천
 app.use(express.static(path.join(__dirname, 'public'))); // __dirname(app.js가 있는 폴더 toyproject-sns를 가리킴). 그 안의 public 폴더를 가져오라는 의미
-app.use(express.json());
-app.use(express.urlencoded({ extended: false })); // form양식 요청 허용
+app.use(express.json());    // req.body를 ajax json 요청으로부터
+app.use(express.urlencoded({ extended: false })); // form양식 요청 허용 (req.body 폼으로부터)
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(session({
     resave: false,
@@ -45,10 +46,11 @@ app.use(session({
         secure: false, // HTTPS로 변경 시 true로 바꾸기
     },
 }));
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.initialize()); // req.user, req.login, req.isAuthenticate, req.logout
+app.use(passport.session()); // connect.sid라는 이름으로 세션 쿠키가 브라우저로 전송
 
 app.use('/', pageRouter);
+app.use('/auth', authRouter);
 
 app.use((req, res, next) => {
     const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
