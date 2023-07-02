@@ -12,6 +12,7 @@ dotenv.config(); // process.env
 // process.env.COOKIE_SECRET 있음
 const pageRouter = require('./routes/page');
 const authRouter = require('./routes/auth');
+const postRouter = require('./routes/post');
 const { sequelize } = require('./models');
 const passportConfig = require('./passport');
 
@@ -34,6 +35,7 @@ sequelize.sync({ force: false })    // 개발시 테이블 잘못 만들었다�
 
 app.use(morgan('dev')); // 개발할 때는 자세한 dev로, 배포시 combined으로 바꾸는 거 추천
 app.use(express.static(path.join(__dirname, 'public'))); // __dirname(app.js가 있는 폴더 toyproject-sns를 가리킴). 그 안의 public 폴더를 가져오라는 의미
+app.use('/img', express.static(path.join(__dirname, 'uploads'))); // front에서 img를 가져오기 위함
 app.use(express.json());    // req.body를 ajax json 요청으로부터
 app.use(express.urlencoded({ extended: false })); // form양식 요청 허용 (req.body 폼으로부터)
 app.use(cookieParser(process.env.COOKIE_SECRET));
@@ -51,6 +53,7 @@ app.use(passport.session()); // connect.sid라는 이름으로 세션 쿠키가 
 
 app.use('/', pageRouter);
 app.use('/auth', authRouter);
+app.use('/post', postRouter);
 
 app.use((req, res, next) => {
     const error = new Error(`${req.method} ${req.url} 라우터가 없습니다.`);
