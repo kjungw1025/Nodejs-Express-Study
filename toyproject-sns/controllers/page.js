@@ -1,4 +1,4 @@
-const { User, Post } = require('../models'); 
+const { User, Post, Hashtag } = require('../models'); 
 
 exports.renderProfile = (req, res) => {
     res.render('profile', { title: '내 정보 - NodeBird'}); // res.locals로 선언한 변수들 + 두 번째 인수들도 Front로 넘어감
@@ -26,6 +26,32 @@ exports.renderMain = async (req, res, next) => {
     catch (error) {
         console.error(error);
         next(error);
+    }
+};
+
+exports.renderHashtag = async (req, res, next) => {
+    const query = req.query.hashtag;
+    if (!query) {
+        return res.redirect('/');
+    }
+    try {
+        const hashtag = await Hashtag.findOne({ where: { title: query }});
+        let posts = [];
+        if (hashtag) {
+            posts = await hashtag.getPosts({ 
+                include: [{ model: User,attributes: ['id', 'nick'] }],
+                order: [['createdAt', 'DESC']]
+            });  // 해시태그에 속해 있는 게시글들을 찾음
+        }
+
+        return res.render('main', {
+            title: `${query} | NodeBird`,
+            twits: posts,
+        });
+    }
+    catch (error) {
+        console.error(error);
+        return next(error);
     }
 };
 
