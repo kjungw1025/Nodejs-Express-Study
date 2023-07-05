@@ -49,6 +49,7 @@ class User extends Sequelize.Model {
       as: 'Followings',     // 컬럼에 대한 별명
       through: 'Follow',    // 중간 테이블 명
     });
+    db.User.belongsToMany(db.Post, { through: 'Like', as: 'Liked'});
   }
 };
 

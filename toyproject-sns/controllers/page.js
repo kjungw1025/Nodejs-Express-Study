@@ -1,4 +1,5 @@
 const { User, Post, Hashtag } = require('../models'); 
+const { sequelize } = require('../models');
 
 exports.renderProfile = (req, res) => {
     res.render('profile', { title: '내 정보 - NodeBird'}); // res.locals로 선언한 변수들 + 두 번째 인수들도 Front로 넘어감
@@ -18,9 +19,16 @@ exports.renderMain = async (req, res, next) => {
             },
             order: [['createdAt', 'DESC']],
         });
+
+        const [result, metadata] = await sequelize.query('SELECT PostId, JSON_ARRAYAGG(UserId) as UserIds, COUNT(PostId) as likeCount \
+                                                        FROM nodebird.like \
+                                                        Group by PostId');
+        console.log(result);
+
         res.render('main', {
             title: 'NodeBird',
             twits: posts,
+            likes: result,
         });
     }
     catch (error) {

@@ -3,7 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-const { afterUploadImage, uploadPost, deletePost } = require('../controllers/post');
+const { afterUploadImage, uploadPost, deletePost, createLike, deleteLike } = require('../controllers/post');
 const { isLoggedIn } = require('../middlewares');
 
 const router = express.Router();
@@ -31,11 +31,19 @@ const upload = multer({
 // POST /post/img
 router.post('/img', isLoggedIn, upload.single('img'), afterUploadImage); // 'img'는 main.html의 forData.append할 때의 첫번째 매개변수와 이름이 같아야함
 
-// Post /post
+// POST /post
 const upload2 = multer();
 router.post('/', isLoggedIn, upload2.none(), uploadPost); // img를 올릴 때는 /post/img, 게시글을 올릴 때는 /post
 
 // GET /post/:id/delete
 router.get('/:id/delete', isLoggedIn, deletePost);
+
+// POST /post/:id/like
+router.post('/:id/like', isLoggedIn, createLike);
+
+// DELETE /delete/:id/like
+router.delete('/:id/like', isLoggedIn, deleteLike);
+
+// router.get('/:id/like', showLike);
 
 module.exports = router;

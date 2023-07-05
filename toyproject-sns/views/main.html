@@ -48,6 +48,25 @@ main.html의 block content와 endblock 안의 내용이 들어감
             {% if twit.img %}
               <div class="twit-img"><img src="{{twit.img}}" alt="섬네일"></div>
             {% endif %}
+
+            {% set flag = true %}
+            {% for like in likes %}
+              {% if like.PostId === twit.id %}
+                {% if like.UserIds.includes(user.id) %}
+                  <i class="fa-solid fa-heart twit-like" id="{{twit.id}}" style="color: red;"></i>
+                {% else %}
+                  <i class="fa-solid fa-heart twit-like" id="{{twit.id}}" style="color: rgb(224, 224, 224);"></i>
+                {% endif %}
+                <div>좋아요 {{ like.likeCount }}개</div>
+                {% set flag = false %}
+              {% endif %}
+            {% endfor %}
+
+            {% if flag %}
+              <i class="fa-solid fa-heart twit-like" id="{{twit.id}}" style="color: rgb(224, 224, 224);"></i>
+              <div>좋아요 0개</div>
+            {% endif%}
+
           </div>
         {% endfor %}
       </div>
@@ -112,6 +131,39 @@ main.html의 block content와 endblock 안의 내용이 들어감
                 .catch((err) => {
                   console.error(err);
                 });
+            }
+          }
+        }
+      });
+    });
+
+    // 좋아요 버튼
+    document.querySelectorAll('.twit-like').forEach(function(tag) {
+      tag.addEventListener('click', function() {
+        const myId = document.querySelector('#my-id');
+        if (myId) {
+          const userId = tag.parentNode.querySelector('.twit-user-id').value;
+          const postId = tag.parentNode.querySelector('.twit-id').value;
+          if (userId !== myId.value) {  // 본인은 좋아요 못하게
+            if (document.getElementById(postId).style.color === "rgb(224, 224, 224)") {
+              axios.post(`/post/${postId}/like`)
+                .then(() => {
+                  location.reload();
+                })
+                .catch((err) => {
+                  console.error(err);
+                });
+              document.getElementById(postId).style.color = "red";
+            }
+            else if (document.getElementById(postId).style.color === "red") {
+              axios.delete(`/post/${postId}/like`)
+                .then(() => {
+                  location.reload();
+                })
+                .catch((err) => {
+                  console.error(err);
+                });
+              document.getElementById(postId).style.color = "rgb(224, 224, 224)";
             }
           }
         }
