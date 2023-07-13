@@ -84,7 +84,7 @@ exports.createComment = async (req, res, next) => {
         const newComment = await Comment.create({
             PostId: post.id,
             UserId: req.user.id,
-            content: req.body.content,
+            comment: req.body.comment,
         });
         const comment = await Comment.findOne({
             where: {
@@ -117,7 +117,8 @@ exports.readComment = async (req, res, next) => {
                 model: User,
                 attributes: ['id', 'nick'],
             }],
-            order: [['createdAt', 'ASC']],
+            order: [['created_at', 'ASC']],
+            // model에서 created_at column을 생성했으므로 createdAt으로 작성하면 안되는듯 
         });
         res.json(comments);
     }
@@ -130,9 +131,9 @@ exports.readComment = async (req, res, next) => {
 exports.updateComment = async(req, res, next) => {
     try {
         const result = await Comment.update({
-            content: req.body.comment,
+            comment: req.body.comment,
         }, {
-            where: { id: req.params.id },
+            where: { id: req.params.commentid },
         });
         res.json(result);
     }
@@ -145,7 +146,7 @@ exports.updateComment = async(req, res, next) => {
 exports.deleteComment = async(req, res, next) => {
     try {
         const result = await Comment.destroy({
-            where: { id: req.params.id }
+            where: { id: req.params.commentid }
         });
         res.json(result);
     }
