@@ -55,10 +55,10 @@ router.post('/:id/comment', isLoggedIn, createComment);
 // GET /post/:id/comments
 router.get('/:id/comments', readComment);
 
-// UPDATE /post/:id/comment
-router.patch('/:id/comment', isLoggedIn, updateComment);
+// UPDATE /post/:id/comment/:commentid
+router.patch('/:id/comment/:commentid', isLoggedIn, updateComment);
 
-// DELETE /post/:id/comment
-router.delete('/:id/comment', isLoggedIn, deleteComment);
+// DELETE /post/:id/comment/:commentid
+router.delete('/:id/comment/:commentid', isLoggedIn, deleteComment);
 
 module.exports = router;
