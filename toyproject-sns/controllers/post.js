@@ -1,4 +1,4 @@
-const { Post, Hashtag } = require('../models');
+const { Post, Hashtag, Comment, User } = require('../models');
 
 exports.afterUploadImage = (req, res) => {
     console.log(req.files);
@@ -68,6 +68,86 @@ exports.deleteLike = async (req, res, next) => {
         }
         await post.removeLiker(req.user.id);
         res.json({ userId: req.user.id });
+    }
+    catch (error) {
+        console.error(error);
+        next(error);
+    }
+};
+
+exports.createComment = async (req, res, next) => {
+    try {
+        const post = await Post.findOne({ where: { id: req.params.id }});
+        if (!post) {
+            return res.status(404).send('포스트가 존재하지 않습니다.');
+        }
+        const newComment = await Comment.create({
+            PostId: post.id,
+            UserId: req.user.id,
+            content: req.body.content,
+        });
+        const comment = await Comment.findOne({
+            where: {
+                id: newComment.id,
+            },
+            include: [{
+                model: User,
+                attributes: ['id', 'nick'],
+            }],
+        });
+        return res.json(comment);
+    }
+    catch (error) {
+        console.error(error);
+        next(error);
+    }
+};
+
+exports.readComment = async (req, res, next) => {
+    try {
+        const post = await Post.findOne({ where: { id: req.params.id }});
+        if (!post) {
+            return res.status(404).send('포스트가 존재하지 않습니다.');
+        }
+        const comments = await Comment.findAll({
+            where: {
+                PostId: req.params.id,
+            },
+            include: [{
+                model: User,
+                attributes: ['id', 'nick'],
+            }],
+            order: [['createdAt', 'ASC']],
+        });
+        res.json(comments);
+    }
+    catch (error) {
+        console.error(error);
+        next(error);
+    }
+};
+
+exports.updateComment = async(req, res, next) => {
+    try {
+        const result = await Comment.update({
+            content: req.body.comment,
+        }, {
+            where: { id: req.params.id },
+        });
+        res.json(result);
+    }
+    catch (error) {
+        console.log(error);
+        next(error);
+    }
+};
+
+exports.deleteComment = async(req, res, next) => {
+    try {
+        const result = await Comment.destroy({
+            where: { id: req.params.id }
+        });
+        res.json(result);
     }
     catch (error) {
         console.error(error);
