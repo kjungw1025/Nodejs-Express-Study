@@ -67,6 +67,30 @@ main.html의 block content와 endblock 안의 내용이 들어감
               <div>좋아요 0개</div>
             {% endif%}
 
+            <div>
+              <br>
+              <div>댓글 등록</div>
+              <form id="comment-form">
+                <fieldset>
+                  <div><input id="postid" type="hidden" value="{{twit.id}}"></div>
+                  <span><input id="comment" type="text" placeholder="댓글" style="width: 85%;"></span>
+                  <button type="submit">등록</button>
+                </fieldset>
+              </form>
+            </div>
+            <br>
+            <table id="comment-list">
+              <thead>
+                <tr>
+                  <th>작성자</th>
+                  <th>댓글</th>
+                  <th>수정</th>
+                  <th>삭제</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+
           </div>
         {% endfor %}
       </div>
@@ -170,5 +194,6 @@ main.html의 block content와 endblock 안의 내용이 들어감
       });
     });
   </script>
+  <script src="/comment.js"></script>
 {% endblock %}
 
